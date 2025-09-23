@@ -12,6 +12,8 @@ import { zSchema } from "@/lib/zodSchema";
 import {FaRegEyeSlash} from 'react-icons/fa';
 import {FaRegEye} from 'react-icons/fa6';
 
+import { WEBSITE_REGISTER } from "@/routers/WebsiteRoute";
+
 import {
   Form,
   FormControl,
@@ -22,6 +24,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ButtonLoading from "@/components/Application/ButtonLoading";
+import Link from "next/link";
 
 const LoginPage = () => {
     const [loading, setLoading] = useState(false);
@@ -122,13 +125,24 @@ const LoginPage = () => {
                     />
                 </div>
 
-                <div>
+                <div className="mb-3">
                     <ButtonLoading 
                     loading={loading}
                     className="w-full h-10 text-base cursor-pointer"
                     type="submit" 
                     text="Login" 
                     />
+                </div>
+
+                <div className="text-center">
+                    <div className="flex justify-center items-center gap-1">
+                        <p >Don't have an account? </p>
+                        <Link href={WEBSITE_REGISTER} className="text-primary underline">Create account!</Link>
+                    </div>
+
+                    <div className="mt-2">
+                        <Link href="" className="text-primary underline">Forgot Password?</Link>
+                    </div>
                 </div>
 
             </form>
