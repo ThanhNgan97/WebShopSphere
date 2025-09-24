@@ -10,20 +10,21 @@ dotenv.config();
 
 // Hàm response chuẩn
 function response(success, status, message, data = null) {
-  return new Response(
-    JSON.stringify({ success, message, data }),
-    {
-      status,
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new Response(JSON.stringify({ success, message, data }), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // Hàm catch lỗi
 function catchError(error, message = "Internal Server Error") {
   console.error(message, error);
   return new Response(
-    JSON.stringify({ success: false, message, error: error?.message || error }),
+    JSON.stringify({
+      success: false,
+      message,
+      error: error?.message || error,
+    }),
     { status: 500, headers: { "Content-Type": "application/json" } }
   );
 }
@@ -43,7 +44,12 @@ export async function POST(request) {
     const validationData = validationSchema.safeParse(payload);
 
     if (!validationData.success) {
-      return response(false, 400, "Invalid or missing input field", validationData.error);
+      return response(
+        false,
+        400,
+        "Invalid or missing input field",
+        validationData.error
+      );
     }
 
     const { name, email, password } = validationData.data;
@@ -58,25 +64,40 @@ export async function POST(request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newRegisterUser = new UserModel({ name, email, password: hashedPassword });
+    const newRegisterUser = new UserModel({
+      name,
+      email,
+      password: hashedPassword,
+    });
     await newRegisterUser.save();
 
-    // JWT token
+    // ✅ JWT token (ép _id thành string)
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-    const token = await new SignJWT({ id: newRegisterUser._id })
+    const token = await new SignJWT({ userId: newRegisterUser._userId.toString() }) // ép string ở đây
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("1h")
       .sign(secret);
 
     // Send verification email
-    await sendMail(
-      "Email Verification request from Developer Nancy",
-      email,
-      emailVerificationLink(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${token}`
+    try {
+      await sendMail(
+        "Email Verification request from Developer Nancy",
+        email,
+       emailVerificationLink(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
       )
-    );
+
+      );
+    } catch (err) {
+      console.error("Failed to send email:", err);
+      return response(
+        false,
+        500,
+        "Failed to send verification email",
+        err.message
+      );
+    }
 
     return response(
       true,

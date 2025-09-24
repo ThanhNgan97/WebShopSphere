@@ -3,14 +3,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import React, { useState } from "react";
 import Logo from "@/public/assets/images/logo-black.png";
+// import Facebook from "@public/assets/images/facebook.png";
+// import Google from "@public/assets/images/google.png";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { zSchema } from "@/lib/zodSchema";
 
-import {FaRegEyeSlash} from 'react-icons/fa';
-import {FaRegEye} from 'react-icons/fa6';
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 
 import { WEBSITE_REGISTER } from "@/routers/WebsiteRoute";
 
@@ -27,22 +28,16 @@ import ButtonLoading from "@/components/Application/ButtonLoading";
 import Link from "next/link";
 
 const LoginPage = () => {
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isTypePassword, setIsTypePassword] = useState(true);
 
-    const [isTypePassword, setIsTypePassword] = useState(true);
-
-  const formSchema = zSchema.pick({
-    email: true
-  }).extend({
-    password:z.string().min('3', 'Password field is required')
-  })
+  const formSchema = zSchema
+    .pick({ email: true })
+    .extend({ password: z.string().min(3, "Password field is required") });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const handleLoginSubmit = async (values) => {
@@ -50,106 +45,128 @@ const LoginPage = () => {
   };
 
   return (
-    <Card className="w-[450px]">
-      <CardContent>
-        {/* Logo */}
-        <div className="flex justify-center">
-          <Image
-            src={Logo.src}
-            width={Logo.width}
-            height={Logo.height}
-            alt="logo"
-            className="max-w-[150px]"
-          />
-        </div>
+    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-purple-400 via-pink-300 to-blue-300">
+        <Card className="w-[400px] max-w-[90%] backdrop-blur-md bg-white/30 rounded-xl shadow-lg">
+        <CardContent className="px-8 py-6">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <Image
+              src={Logo.src}
+              width={Logo.width}
+              height={Logo.height}
+              alt="logo"
+              className="max-w-[120px]"
+            />
+          </div>
 
-        {/* Title */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Login Into Account</h1>
-          <p className="text-xm text-muted-foreground ">Login into your account by filling out the form below.</p>
-        </div>
+          {/* Title */}
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-white">Sign Up</h1>
+         
+          </div>
 
-        <div>
+          {/* Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleLoginSubmit)} className="space-y-6">
-                <div className="mb-5">
-                    {/* Email */}
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="mt-4 block text-base ">Email</FormLabel>
-                            <FormControl>
-                            <Input 
-                                className="border-1 border-gray-300 p-2 rounded-md h-10 " 
-                                type={isTypePassword ? "password" : "text"} 
-                                placeholder="you@example.com" 
-                                {...field} 
-                            />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                </div>
+            <form onSubmit={form.handleSubmit(handleLoginSubmit)} className="space-y-4">
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white text-sm">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="w-full h-10 rounded-md px-3 text-black"
+                        placeholder="you@example.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs text-red-400" />
+                  </FormItem>
+                )}
+              />
 
-                <div className="mb-5">
-                    {/* Password */}
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="block text-base ">Password</FormLabel>
-                            <FormControl>
-                            <div className="relative">
-                                <Input
-                                className="border-1 border-gray-300 p-2 rounded-md h-10 pr-10"
-                                type={isTypePassword ? "password" : "text"}
-                                placeholder="••••••••"
-                                {...field}
-                                />
-                                <button
-                                type="button"
-                                onClick={() => setIsTypePassword(!isTypePassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                >
-                                {isTypePassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                                </button>
-                            </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                </div>
+              {/* Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white text-sm">Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          className="w-full h-10 rounded-md px-3 pr-10 text-black"
+                          type={isTypePassword ? "password" : "text"}
+                          placeholder="••••••••"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setIsTypePassword(!isTypePassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+                        >
+                          {isTypePassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-xs text-red-400" />
+                  </FormItem>
+                )}
+              />
 
-                <div className="mb-3">
-                    <ButtonLoading 
-                    loading={loading}
-                    className="w-full h-10 text-base cursor-pointer"
-                    type="submit" 
-                    text="Login" 
-                    />
-                </div>
-
-                <div className="text-center">
-                    <div className="flex justify-center items-center gap-1">
-                        <p >Don't have an account? </p>
-                        <Link href={WEBSITE_REGISTER} className="text-primary underline">Create account!</Link>
-                    </div>
-
-                    <div className="mt-2">
-                        <Link href="" className="text-primary underline">Forgot Password?</Link>
-                    </div>
-                </div>
-
+              {/* Submit */}
+              <ButtonLoading
+                loading={loading}
+                className="w-full h-10 text-base bg-blue-600 text-white rounded-md hover:bg-blue-400"
+                type="submit"
+                text="Sign Up"
+              />
             </form>
           </Form>
-        </div>
-      </CardContent>
-    </Card>
+
+          {/* Or sign up with */}
+          <div className="flex flex-col items-center justify-center gap-2 mt-4 text-white">
+            <p>or sign up with</p>
+            <div className="flex gap-2">
+              <button className="bg-white/80 rounded-full w-8 h-8 flex items-center justify-center p-1">
+                <Image
+                  src="/assets/images/facebook.png" 
+                  alt="Facebook"
+                  width={50}
+                  height={50}
+                  className="30px "
+                />
+              </button>
+              <button className="bg-white/80 rounded-full w-8 h-8 flex items-center justify-center p-1">
+                <Image
+                  src="/assets/images/google.png" // 
+                  className="30px "
+                  alt="Google"
+                  width={50}
+                  height={50}
+                />
+              </button>
+            </div>
+
+          </div>
+
+
+          {/* Footer */}
+            <div className="text-center mt-4">
+              <div className="flex justify-center items-center gap-1">
+                  <p >Don't have an account? </p>
+                  <Link href={WEBSITE_REGISTER} className="text-primary underline">Create account!</Link>
+              </div>
+
+              <div className="mt-2">
+                  <Link href="" className="text-primary underline">Forgot Password?</Link>
+              </div>
+                </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
